@@ -20,10 +20,10 @@ MAP_WIDTH = 10
 def clear_screen():
   os.system('cls' if os.name == 'nt' else 'clear')
 
-# generate random locations for player, door and monster
+# generate random locations for player, door and monster_one
 def get_location(CELLS):
-  '''returns a tuple with three random elements from an iterable argument'''
-  return random.sample(CELLS, 3)
+  '''returns a tuple with five random elements from an iterable argument'''
+  return random.sample(CELLS, 5)
 
 # move the player object
 def move_player(player, move):
@@ -53,36 +53,70 @@ def get_moves(player):
     moves.remove('right')
   return moves
 
+# AI moves:
+def ai_move(monster):
+  allowed_moves = get_moves(monster)
+  ai_number = random.randint(-1, len(allowed_moves) - 1)
+  if ai_number == -1:
+    return monster
+  ai_choice = allowed_moves[ai_number]
+  new_monster = move_player(monster, ai_choice)
+  return new_monster
+
 # print a map to the screen using 'underscore' and 'pipe'
-def draw_map(player):
+def draw_map(player, monster_one, monster_two, monster_three, door):
   print(' _' * MAP_WIDTH)
   tile = '|{}'
   for cell in CELLS:
     x, y = cell
     if x < MAP_WIDTH - 1:
       line_end = ''
-      if cell == player:
+      if cell == door:
+        output = tile.format('O')
+      elif cell == monster_one:
+        output = tile.format('§')
+      elif cell == monster_two:
+        output = tile.format('§')
+      elif cell == monster_three:
+        output = tile.format('§')
+      elif cell == player:
         output = tile.format('X')
       else:
         output = tile.format('_')
     else:
       line_end = '\n'
-      if cell == player:
+      if cell == door:
+        output = tile.format('O|')
+      elif cell == monster_one:
+        output = tile.format('§|')
+      elif cell == monster_two:
+        output = tile.format('§|')
+      elif cell == monster_three:
+        output = tile.format('§|')
+      elif cell == player:
         output = tile.format('X|')
       else:
         output = tile.format('_|')
     print(output, end=line_end)
   print()
 
+# check for collision of player and monsters
+def check_snake(player, monster_one, monster_two, monster_three, door):
+    if player == monster_one or player == monster_two or player == monster_three:
+      clear_screen()
+      draw_map(player, monster_one, monster_two, monster_three, door)
+      input('The snake got you.')
+      main_menu()
+
 # start new game
 def game_loop():
-  # generate new map locations for monsters, player and door
-  monster, player, door = get_location(CELLS)
+  # generate new map locations for monster_ones, player and door
+  monster_one, monster_two, monster_three, player, door = get_location(CELLS)
 
   # player turns
   while True:
     clear_screen()
-    draw_map(player)
+    draw_map(player, monster_one, monster_two, monster_three, door)
     possible_moves = get_moves(player)
     moves_string = ', '.join(possible_moves)
     room_string = '{} - {}'.format(player[0] + 1, player[1] + 1)
@@ -102,6 +136,15 @@ def game_loop():
       continue
     else:
       player = move_player(player, move)
+      check_snake(player, monster_one, monster_two, monster_three, door)
+      monster_one = ai_move(monster_one)
+      monster_two = ai_move(monster_two)
+      monster_three = ai_move(monster_three)
+    if player == door:
+      input('You made it to the entrace before the snakes found you.')
+      main_menu()
+    else:
+      check_snake(player, monster_one, monster_two, monster_three, door)
 
 # initialize main menu
 def main_menu():
