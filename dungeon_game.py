@@ -2,11 +2,20 @@ import os
 import random
 import sys
 
-CELLS = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0),
-         (0, 1), (1, 1), (2, 1), (3, 1), (4, 1),
-         (0, 2), (1, 2), (2, 2), (3, 2), (4, 2),
-         (0, 3), (1, 3), (2, 3), (3, 3), (4, 3),
-         (0, 4), (1, 4), (2, 4), (3, 4), (4, 4)]
+# 2-D Map Coordinates Layout
+CELLS = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0),
+         (0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1),
+         (0, 2), (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2),
+         (0, 3), (1, 3), (2, 3), (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3), (9, 3),
+         (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (6, 4), (7, 4), (8, 4), (9, 4),
+         (0, 5), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (6, 5), (7, 5), (8, 5), (9, 5),
+         (0, 6), (1, 6), (2, 6), (3, 6), (4, 6), (5, 6), (6, 6), (7, 6), (8, 6), (9, 6),
+         (0, 7), (1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7), (7, 7), (8, 7), (9, 7),
+         (0, 8), (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8), (7, 8), (8, 8), (9, 8),
+         (0, 9), (1, 9), (2, 9), (3, 9), (4, 9), (5, 9), (6, 9), (7, 9), (8, 9), (9, 9),]
+
+MAP_HEIGHT = 10
+MAP_WIDTH = 10
 
 def clear_screen():
   os.system('cls' if os.name == 'nt' else 'clear')
@@ -16,7 +25,7 @@ def get_location(CELLS):
   '''returns a tuple with three random elements from an iterable argument'''
   return random.sample(CELLS, 3)
 
-# move the player
+# move the player object
 def move_player(player, move):
   x, y = player
   if move == 'left':
@@ -30,27 +39,27 @@ def move_player(player, move):
   new_player = (x, y)
   return new_player
 
-# get possible moves for the player
+# get permitted move-actions for the player
 def get_moves(player):
   moves = ['left', 'right', 'up', 'down']
   x, y = player
   if y == 0:
     moves.remove('up')
-  if y == 4:
+  if y == MAP_HEIGHT - 1:
     moves.remove('down')
   if x == 0:
     moves.remove('left')
-  if x == 4:
+  if x == MAP_WIDTH - 1:
     moves.remove('right')
   return moves
 
 # print a map to the screen using 'underscore' and 'pipe'
 def draw_map(player):
-  print(' _' * 5)
+  print(' _' * MAP_WIDTH)
   tile = '|{}'
   for cell in CELLS:
     x, y = cell
-    if x < 4:
+    if x < MAP_WIDTH - 1:
       line_end = ''
       if cell == player:
         output = tile.format('X')
@@ -67,7 +76,7 @@ def draw_map(player):
 
 # start new game
 def game_loop():
-  # generate new map locations
+  # generate new map locations for monsters, player and door
   monster, player, door = get_location(CELLS)
 
   # player turns
@@ -89,7 +98,7 @@ def game_loop():
     if move == 'quit':
       main_menu()
     elif move not in possible_moves:
-      input('Can not move to {}. Press enter to continue'.format(move))
+      input('Can not move {}. Press enter to continue'.format(move))
       continue
     else:
       player = move_player(player, move)
@@ -104,7 +113,6 @@ def main_menu():
   if select == 'quit':
     sys.exit()
   game_loop()
-
 
 # initialize the program
 main_menu()
