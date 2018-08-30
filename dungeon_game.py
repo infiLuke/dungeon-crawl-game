@@ -157,5 +157,9 @@ def main_menu():
     sys.exit()
   game_loop()
 
-# initialize the program
-main_menu()
+
+def main():
+    main_menu()
+
+if __name__ == '__main__':
+    main()
