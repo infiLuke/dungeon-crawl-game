@@ -14,8 +14,8 @@ CELLS = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0),
          (0, 8), (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8), (7, 8), (8, 8), (9, 8),
          (0, 9), (1, 9), (2, 9), (3, 9), (4, 9), (5, 9), (6, 9), (7, 9), (8, 9), (9, 9),]
 
-MAP_HEIGHT = 10
 MAP_WIDTH = 10
+MAP_HEIGHT = 10
 
 def clear_screen():
   os.system('cls' if os.name == 'nt' else 'clear')
@@ -141,7 +141,7 @@ def game_loop():
       monster_two = ai_move(monster_two)
       monster_three = ai_move(monster_three)
     if player == door:
-      input('You made it to the entrace before the snakes found you.')
+      input('You made it to the entrace before the snakes found you. Congratulations!!')
       main_menu()
     else:
       check_snake(player, monster_one, monster_two, monster_three, door)
