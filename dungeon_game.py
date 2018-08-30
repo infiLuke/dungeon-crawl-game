@@ -65,6 +65,7 @@ def ai_move(monster):
 
 # print a map to the screen using 'underscore' and 'pipe'
 def draw_map(player, monster_one, monster_two, monster_three, door):
+  clear_screen()
   print(' _' * MAP_WIDTH)
   tile = '|{}'
   for cell in CELLS:
@@ -103,7 +104,6 @@ def draw_map(player, monster_one, monster_two, monster_three, door):
 # check for collision of player and monsters
 def check_snake(player, monster_one, monster_two, monster_three, door):
     if player == monster_one or player == monster_two or player == monster_three:
-      clear_screen()
       draw_map(player, monster_one, monster_two, monster_three, door)
       input('The snake got you.')
       main_menu()
@@ -115,7 +115,6 @@ def game_loop():
 
   # player turns
   while True:
-    clear_screen()
     draw_map(player, monster_one, monster_two, monster_three, door)
     possible_moves = get_moves(player)
     moves_string = ', '.join(possible_moves)
@@ -156,7 +155,6 @@ def main_menu():
   if select == 'quit':
     sys.exit()
   game_loop()
-
 
 def main():
     main_menu()
