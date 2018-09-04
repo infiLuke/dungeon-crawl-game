@@ -181,7 +181,7 @@ def game_loop(difficulty_level):
     if move == 'quit':
       main_menu()
     elif move not in possible_moves:
-      input('Can not move {}. Press enter to continue'.format(move))
+      input('I can not move {}. Confused and dazed I stare into the darkness'.format(move))
       continue
     else:
       player = move_player(player, move)
