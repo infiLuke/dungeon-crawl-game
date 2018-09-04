@@ -54,13 +54,59 @@ def get_moves(player):
   return moves
 
 # AI moves:
-def ai_move(monster):
+def ai_move(monster, player, door, difficulty_level):
   allowed_moves = get_moves(monster)
-  ai_number = random.randint(-1, len(allowed_moves) - 1)
-  if ai_number == -1:
-    return monster
-  ai_choice = allowed_moves[ai_number]
-  new_monster = move_player(monster, ai_choice)
+  new_monster = monster
+  random_roll = random.randint(0, 101)
+  # ai chooses random move direction if random number is higher than the difficulty level
+  if random_roll > difficulty_level or monster == door:
+    ai_number = random.randint(-1, len(allowed_moves) - 1)
+    if ai_number == -1:
+      return new_monster
+    ai_choice = allowed_moves[ai_number]
+    new_monster = move_player(monster, ai_choice)
+  else:
+    random_roll = random.randint(-1, 101)
+    monster_x, monster_y = monster
+    # ai chooses to move towards the player
+    if random_roll > 20:
+      player_x, player_y = player
+      # horizontal distance between player and monster
+      x_diff = monster_x - player_x  # positive if the player if further right than monster
+      # vertical distance between player and monster
+      y_diff = monster_y - player_y  # positive if the player is further up than monster
+      if abs(y_diff) < abs(x_diff):
+        if x_diff > 0:
+          # move left
+          monster_x -= 1
+        else:
+          # move right
+          monster_x += 1
+      else:
+        if y_diff > 0:
+          # move up
+          monster_y -= 1
+        else:
+          # move down
+          monster_y += 1
+      new_monster = (monster_x, monster_y)
+    # ai chooses to protect door - same algorithm as move towards player
+    else:
+      door_x, door_y = door
+      x_diff = monster_x - door_x
+      y_diff = monster_y - door_y
+      if abs(y_diff) < abs(x_diff):
+        if x_diff > 0:
+          monster_x -= 1
+        else:
+          monster_x += 1
+      else:
+        if y_diff > 0:
+          monster_y -= 1
+        else:
+          monster_y += 1
+      new_monster = (monster_x, monster_y)
+
   return new_monster
 
 # print a map to the screen using 'underscore' and 'pipe'
@@ -109,13 +155,17 @@ def check_snake(player, monster_one, monster_two, monster_three, door):
       main_menu()
 
 # start new game
-def game_loop():
+def game_loop(difficulty_level):
   # generate new map locations for monster_ones, player and door
   monster_one, monster_two, monster_three, player, door = get_location(CELLS)
 
   # player turns
   while True:
     draw_map(player, monster_one, monster_two, monster_three, door)
+    check_snake(player, monster_one, monster_two, monster_three, door)
+    monster_one = ai_move(monster_one, player, door, difficulty_level)
+    monster_two = ai_move(monster_two, player, door, difficulty_level)
+    monster_three = ai_move(monster_three, player, door, difficulty_level)
     possible_moves = get_moves(player)
     moves_string = ', '.join(possible_moves)
     room_string = '{} - {}'.format(player[0] + 1, player[1] + 1)
@@ -135,10 +185,6 @@ def game_loop():
       continue
     else:
       player = move_player(player, move)
-      check_snake(player, monster_one, monster_two, monster_three, door)
-      monster_one = ai_move(monster_one)
-      monster_two = ai_move(monster_two)
-      monster_three = ai_move(monster_three)
     if player == door:
       input('You made it to the entrace before the snakes found you. Congratulations!!')
       main_menu()
@@ -147,6 +193,7 @@ def game_loop():
 
 # initialize main menu
 def main_menu():
+  difficulty_level = 100
   clear_screen()
   print('Welcome to the dungeon!')
   print('Press Return to start a new game!')
@@ -154,7 +201,23 @@ def main_menu():
   select = input(' >  ').lower()
   if select == 'quit':
     sys.exit()
-  game_loop()
+  clear_screen()
+  print('Select Difficulty: BUNNY NORMAL NIGHTMARE HELL COWFARM')
+  difficulty = input(' >  ').lower()
+  if difficulty == 'bunny':
+    difficulty_level = 0
+  elif difficulty == 'normal':
+    difficulty_level = 32
+  elif difficulty == 'nightmare':
+    difficulty_level = 60
+  elif difficulty == 'hell':
+    difficulty_level = 84
+  elif difficulty == 'cowfarm':
+    difficulty_level = 99
+  else:
+    input('Not a valid difficulty level  ')
+    main_menu()
+  game_loop(difficulty_level)
 
 def main():
     main_menu()
